@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống Học tập & Dự án Hài hòa</title>
+    <style>
+        :root {
+            /* Light Mode Variables */
+            --bg-color: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --card-project-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --blue-brand: #003399; /* Màu xanh ULIS */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 12px 20px -3px rgba(0, 51, 153, 0.08);
+
+            /* Folder Colors - Light Mode (Xanh ULIS) */
+            --folder-back: #d0e0ff;
+            --folder-front: linear-gradient(135deg, #1a66ff, #003399);
+            --folder-tab: #a0c2ff;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Mode Variables */
+            --bg-color: #0f172a;
+            --sidebar-bg: #1e293b;
+            --card-project-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --shadow-md: 0 12px 24px -3px rgba(0, 0, 0, 0.3);
+
+            /* Folder Colors - Dark Mode (Xanh trầm) */
+            --folder-back: #1d2a44;
+            --folder-front: linear-gradient(135deg, #0044cc, #002266);
+            --folder-tab: #253b66;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Thêm cuộn mượt cho toàn bộ trang web */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 1. THANH BÊN (SIDEBAR) */
+        .sidebar {
+            width: 280px;
+            border-right: 1px solid var(--border-color);
+            padding: 32px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            background: var(--sidebar-bg);
+            z-index: 10;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .logo-ulis-container {
+            width: 54px;
+            height: 54px;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            background-color: #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            flex-shrink: 0;
+        }
+
+        .logo-ulis-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .logo-text-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .logo-text-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--blue-brand);
+            line-height: 1.3;
+        }
+
+        .logo-text-subtitle {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 15px;
+            font-weight: 500;
+            padding: 10px 14px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover {
+            background: rgba(0,0,0,0.03);
+            color: var(--text-main);
+        }
+
+        [data-theme="dark"] .nav-links a:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .nav-links a.active {
+            color: var(--blue-brand);
+            background: rgba(0, 51, 153, 0.08);
+            font-weight: 600;
+        }
+
+        .sidebar-bottom {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .theme-toggle-btn {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .theme-toggle-btn:hover {
+            background: var(--border-color);
+        }
+
+        /* 2. VÙNG NỘI DUNG CHÍNH */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 40px 48px;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-title::before {
+            content: "✦ ";
+            color: var(--blue-brand);
+        }
+
+        /* LƯỚI PROJECTS */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .project-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            cursor: pointer;
+        }
+
+        .project-card {
+            background-color: var(--card-project-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--blue-brand);
+        }
+
+        .project-thumb {
+            width: 100%;
+            aspect-ratio: 1.6 / 1;
+            background-color: rgba(0, 0, 0, 0.01);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        [data-theme="dark"] .project-thumb {
+            background-color: rgba(255, 255, 255, 0.01);
+        }
+
+        /* THIẾT KẾ THƯ MỤC CSS */
+        .custom-folder {
+            width: 64px;
+            height: 46px;
+            position: relative;
+            background-color: var(--folder-back);
+            border-radius: 0 6px 6px 6px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06));
+        }
+
+        .custom-folder::before {
+            content: '';
+            width: 28px;
+            height: 8px;
+            position: absolute;
+            top: -7px;
+            left: 0;
+            background-color: var(--folder-tab);
+            border-radius: 5px 5px 0 0;
+        }
+
+        .custom-folder::after {
+            content: '';
+            width: 100%;
+            height: 38px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            background: var(--folder-front);
+            border-radius: 4px 6px 6px 6px;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.12);
+            transform: skewX(-2px);
+            transform-origin: bottom left;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .project-card:hover .custom-folder::after {
+            transform: skewX(-6px) scaleY(0.92);
+        }
+
+        .project-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: transparent;
+        }
+
+        .project-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .project-status {
+            color: var(--text-muted);
+            font-size: 12px;
+            background: rgba(0, 0, 0, 0.04);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        [data-theme="dark"] .project-status {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        /* GIAO DIỆN MỤC INTRODUCTION */
+        .intro-content {
+            display: none;
+            flex-direction: column;
+            gap: 24px;
+            width: 100%;
+        }
+
+        .intro-header-block {
+            margin-bottom: 8px;
+        }
+
+        .intro-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: -16px;
+            margin-bottom: 24px;
+        }
+
+        .intro-vertical-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .image-card {
+            background: var(--card-project-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .image-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--blue-brand);
+        }
+
+        .intro-image, .intro-video {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            display: block;
+        }
+
+        .intro-text-block {
+            padding: 8px 4px 4px 4px;
+        }
+
+        .intro-text-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .intro-text-title::before {
+            content: "";
+            display: inline-block;
+            width: 6px;
+            height: 16px;
+            background-color: var(--blue-brand);
+            border-radius: 2px;
+        }
+
+        .intro-text-desc {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        /* KHUNG NHÚNG FILE TÀI LIỆU TRỰC TIẾP (VIEWER) */
+        .viewer-container {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            height: calc(100vh - 80px);
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .viewer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .back-btn {
+            background: var(--blue-brand);
+            color: #ffffff;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .back-btn:hover {
+            opacity: 0.9;
+        }
+
+        .drive-iframe {
+            width: 100%;
+            flex: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background: #ffffff;
+            box-shadow: var(--shadow-sm);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* NÚT BACK TO TOP (ĐÃ THAY THẾ DẤU CHẤM HỎI) */
+        .back-to-top-btn {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: var(--sidebar-bg);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.2s ease, background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Hiện nút khi có class active */
+        .back-to-top-btn.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .back-to-top-btn:hover {
+            transform: translateY(-4px);
+            border-color: var(--blue-brand);
+            color: var(--blue-brand);
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+    <!-- 1. THANH BÊN (SIDEBAR) -->
+    <div class="sidebar">
+        <div>
+            <div class="logo-area">
+                <div class="logo-ulis-container">
+                    <img src="ảnh 4.png" alt="ULIS Logo" class="logo-ulis-img">
+                </div>
+                <div class="logo-text-container">
+                    <span class="logo-text-title">Trường Đại học Ngoại ngữ</span>
+                    <span class="logo-text-subtitle">Đại học Quốc gia Hà Nội</span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a id="nav-intro">Introduction</a>
+                <a id="nav-projects" class="active">Projects</a>
+            </div>
+        </div>
+        
+        <div class="sidebar-bottom">
+            <button class="theme-toggle-btn" id="theme-toggle">
+                <span id="theme-icon">🌙</span>
+                <span id="theme-text">Dark</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. VÙNG NỘI DUNG CHÍNH -->
+    <div class="main-content">
+
+        <!-- PHẦN HÌNH ẢNH GIỚI THIỆU (MỤC INTRODUCTION) -->
+        <div id="intro-section" class="intro-content">
+            <div class="intro-header-block">
+                <div class="section-title">Introduction</div>
+                <div class="intro-subtitle">Thông tin cá nhân, định hướng phát triển và công cụ làm việc</div>
+            </div>
+            
+            <div class="intro-vertical-stack">
+                <div class="image-card">
+                    <img src="ảnh 1.jpg" alt="About Me" class="intro-image">
+                    <div class="intro-text-block">
+                        <h4 class="intro-text-title">Về Bản Thân (About Me)</h4>
+                        <p class="intro-text-desc">Chào mừng bạn đến với không gian lưu trữ và quản lý dự án cá nhân của tôi. Đây là nơi tôi ghi lại hành trình học tập, nghiên cứu kỹ thuật và phát triển các sản phẩm phần mềm xuyên suốt các tuần làm việc.</p>
+                    </div>
+                </div>
+
+                <div class="image-card">
+                    <img src="ảnh 2.jpg" alt="Goals" class="intro-image">
+                    <div class="intro-text-block">
+                        <h4 class="intro-text-title">Mục Tiêu Phát Triển (My Goals)</h4>
+                        <p class="intro-text-desc">Tập trung nâng cao tư duy giải quyết vấn đề thông qua các bài tập thực hành lớn. Định hướng nghiên cứu chuyên sâu về tối ưu hóa hệ thống, tích hợp công nghệ mới và xây dựng các giải pháp ứng dụng thực tế có giá trị cao.</p>
+                    </div>
+                </div>
+
+                <div class="image-card">
+                    <img src="ảnh 3.jpg" alt="My Used Apps" class="intro-image">
+                    <div class="intro-text-block">
+                        <h4 class="intro-text-title">Ứng Dụng Thường Dùng (My Used Apps)</h4>
+                        <p class="intro-text-desc">Bộ công cụ hỗ trợ đắc lực cho công việc và học tập hàng ngày của tôi. Bao gồm các AI hỗ trợ lập trình thông minh (ChatGPT, Claude), môi trường phát triển mã nguồn (VS Code), ứng dụng ghi chép quản lý công việc (Notion) cùng các nền tảng thiết kế đồ họa linh hoạt.</p>
+                    </div>
+                </div>
+
+                <div class="image-card">
+                    <video class="intro-video" controls>
+                        <source src="video.mp4" type="video/mp4">
+                        Trình duyệt của bạn không hỗ trợ phát thẻ video này.
+                    </video>
+                    <div class="intro-text-block">
+                        <h4 class="intro-text-title">Video Kỷ Niệm (My Video)</h4>
+                        <p class="intro-text-desc">Thước phim ghi lại những khoảnh khắc và kỷ niệm đáng nhớ trong môi trường học tập, huấn luyện và rèn luyện kỹ năng phối hợp thực tế.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PHẦN DỰ ÁN (MỤC PROJECTS) -->
+        <div id="projects-section" style="display: flex; flex-direction: column;">
+            <div class="section-title">Projects</div>
+            
+            <div class="projects-grid" id="folders-grid">
+                <!-- Week 1 -->
+                <div data-url="https://drive.google.com/file/d/1QDobt2nhEV9-yLZXo2kVgzRVaOiGwyOC/preview" class="project-link">
+                    <div class="project-card">
+                        <div class="project-thumb">
+                            <div class="custom-folder"></div>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-name">Week 1</span>
+                            <span class="project-status">Google Drive</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Week 2 -->
+                <div data-url="https://drive.google.com/file/d/11T_X7se_LtpkF_6XuJd71Qv5n6ufhUBW/preview" class="project-link">
+                    <div class="project-card">
+                        <div class="project-thumb">
+                            <div class="custom-folder"></div>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-name">Week 2</span>
+                            <span class="project-status">Google Drive</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Week 3 -->
+                <div data-url="https://drive.google.com/file/d/16qxadRemLzTbmVbd3MLh-wNmvO8d7Ojt/preview" class="project-link">
+                    <div class="project-card">
+                        <div class="project-thumb">
+                            <div class="custom-folder"></div>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-name">Week 3</span>
+                            <span class="project-status">Google Drive</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Week 4 -->
+                <div data-url="https://drive.google.com/file/d/1erqcIquQJLLuZyLzBSHIKpY7bgBW2xTw/preview" class="project-link">
+                    <div class="project-card">
+                        <div class="project-thumb">
+                            <div class="custom-folder"></div>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-name">Week 4</span>
+                            <span class="project-status">Google Drive</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Week 5 -->
+                <div data-url="https://drive.google.com/file/d/1yEel5la801sKW1HOoGrcUKGL0pO3Kso_/preview" class="project-link">
+                    <div class="project-card">
+                        <div class="project-thumb">
+                            <div class="custom-folder"></div>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-name">Week 5</span>
+                            <span class="project-status">Google Drive</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Week 6 -->
+                <div data-url="https://drive.google.com/file/d/1XDe8ZJwn6Mxw-jsoNFwpE-fyg73r7Wrq/preview" class="project-link">
+                    <div class="project-card">
+                        <div class="project-thumb">
+                            <div class="custom-folder"></div>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-name">Week 6</span>
+                            <span class="project-status">Google Drive</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Khung Viewer Iframe -->
+            <div class="viewer-container" id="document-viewer">
+                <div class="viewer-header">
+                    <button class="back-btn" id="close-viewer-btn">← Quay lại danh sách</button>
+                    <span id="viewer-title" style="font-weight: 600;">Đang xem tài liệu</span>
+                </div>
+                <iframe src="" class="drive-iframe" id="drive-frame" allow="autoplay"></iframe>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- NÚT BACK TO TOP (ĐÃ THAY THẾ DẤU CHẤM HỎI) -->
+    <button class="back-to-top-btn" id="backToTopBtn" title="Lên đầu trang">↑</button>
+
+    <script>
+        // --- LOGIC CHUYỂN ĐỔI TAB THANH BÊN ---
+        const navIntro = document.getElementById('nav-intro');
+        const navProjects = document.getElementById('nav-projects');
+        const introSection = document.getElementById('intro-section');
+        const projectsSection = document.getElementById('projects-section');
+        
+        const foldersGrid = document.getElementById('folders-grid');
+        const documentViewer = document.getElementById('document-viewer');
+        const driveFrame = document.getElementById('drive-frame');
+        const viewerTitle = document.getElementById('viewer-title');
+        const closeViewerBtn = document.getElementById('close-viewer-btn');
+
+        function resetViewer() {
+            documentViewer.style.display = 'none';
+            driveFrame.src = '';
+            foldersGrid.style.display = 'grid';
+        }
+
+        navIntro.addEventListener('click', () => {
+            navIntro.classList.add('active');
+            navProjects.classList.remove('active');
+            introSection.style.display = 'flex';
+            projectsSection.style.display = 'none';
+            resetViewer();
+        });
+
+        navProjects.addEventListener('click', () => {
+            navProjects.classList.add('active');
+            navIntro.classList.remove('active');
+            projectsSection.style.display = 'flex';
+            projectsSection.style.flexDirection = 'column';
+            introSection.style.display = 'none';
+            resetViewer();
+        });
+
+        // --- XỬ LÝ SỰ KIỆN XEM FILE TRỰC TIẾP QUA IFRAME ---
+        const projectLinks = document.querySelectorAll('.project-link');
+        projectLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                const url = this.getAttribute('data-url');
+                const weekName = this.querySelector('.project-name').innerText;
+                
+                foldersGrid.style.display = 'none';
+                documentViewer.style.display = 'flex';
+                viewerTitle.innerText = `Đang xem: ${weekName}`;
+                driveFrame.src = url;
+            });
+        });
+
+        closeViewerBtn.addEventListener('click', () => {
+            resetViewer();
+        });
+
+        // --- LOGIC CHUYỂN ĐỔI SÁNG / TỐI ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+        const body = document.body;
+
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            
+            if (currentTheme === 'light') {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.innerText = '☀️';
+                themeText.innerText = 'Light';
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.innerText = '🌙';
+                themeText.innerText = 'Dark';
+            }
+        });
+
+        // --- LOGIC TỰ ĐỘNG ẨN/HIỆN VÀ CUỘN CỦA NÚT BACK TO TOP ---
+        const backToTopBtn = document.getElementById('backToTopBtn');
+
+        window.addEventListener('scroll', () => {
+            // Khi cuộn xuống quá 300px thì hiện nút, ngược lại thì ẩn
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('active');
+            } else {
+                backToTopBtn.classList.remove('active');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth' // Cuộn mượt mà lên đầu
+            });
+        });
+    </script>
+</body>
+</html>
